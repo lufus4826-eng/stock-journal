@@ -1,0 +1,47 @@
+name: Stock Journal Daily ETL Pipeline
+
+on:
+  schedule:
+    # รันทุกวันเวลา 00:00 UTC = 07:00 น. เช้าเวลาไทย (หลังตลาดหุ้นสหรัฐฯ ปิดทำการ)
+    - cron: '0 0 * * *'
+  # เปิดปุ่ม "Run workflow" บนหน้าเว็บ GitHub เพื่อให้เราสามารถกดทดสอบรันเองได้ตลอดเวลา
+  workflow_dispatch:
+
+# ให้สิทธิ์บอทของ GitHub สามารถบันทึกไฟล์ฐานข้อมูลกลับเข้าคลัง (Repository) ได้
+permissions:
+  contents: write
+
+jobs:
+  run-etl:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ขั้นที่ 1: ดึงโค้ดทั้งหมดลงมาเปิดในเซิร์ฟเวอร์
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # ขั้นที่ 2: ติดตั้งสภาพแวดล้อม Python 3.11
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      # ขั้นที่ 3: ติดตั้งไลบรารีจาก requirements.txt (pandas, yfinance)
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # ขั้นที่ 4: สั่งรัน Pipeline ตัวจริงของเรา!
+      - name: Run Master Pipeline
+        run: python pipeline.py
+
+      # ขั้นที่ 5: บันทึกไฟล์ฐานข้อมูลและ Log ใหม่กลับเข้า GitHub อัตโนมัติ
+      - name: Commit and Push Updated Data
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add stock_journal.db stock_journal.log
+          git commit -m "Auto-update stock journal daily data [skip ci]" || echo "No changes to commit"
+          git push

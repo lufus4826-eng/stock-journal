@@ -1,0 +1,43 @@
+trade_date,ticker,action,shares,price_per_share,fee,reason_category,notes
+2024-01-15,VOO,BUY,0.05,436.00,0.0,DCA,Synthetic: MLK Day Holiday DCA test
+2024-01-22,AAPL,BUY,0.15,193.50,0.0,Growth/Theme,Synthetic: Ecosystem strength
+2024-02-05,NVDA,BUY,0.10,693.00,0.0,Growth/Theme,Synthetic: AI Infrastructure (Pre-split test)
+2024-02-15,VOO,BUY,0.05,458.00,0.0,DCA,Synthetic: Bi-weekly DCA
+2024-02-28,MSFT,BUY,0.08,407.50,0.0,Fundamental/Valuation,Synthetic: Cloud & Enterprise AI
+2024-03-15,VOO,BUY,0.05,468.00,0.0,DCA,Synthetic: Bi-weekly DCA
+2024-03-25,TSM,BUY,0.20,138.00,0.0,Growth/Theme,Synthetic: Foundry dominance
+2024-04-15,VOO,BUY,0.05,463.00,0.0,DCA,Synthetic: Bi-weekly DCA
+2024-04-19,NVDA,BUY,0.05,762.00,0.0,Dip Buying,Synthetic: Dip buying pull-back
+2024-04-30,AAPL,BUY,0.12,170.00,0.0,Fundamental/Valuation,Synthetic: Undervalued before earnings
+2024-05-15,VOO,BUY,0.05,485.00,0.0,DCA,Synthetic: Bi-weekly DCA
+2024-05-23,NVDA,BUY,0.05,949.00,0.0,FOMO/News,Synthetic: Post-earnings momentum
+2024-06-03,MSFT,BUY,0.06,413.00,0.0,DCA,Synthetic: Monthly DCA
+2024-06-17,NVDA,BUY,0.50,131.00,0.0,Growth/Theme,Synthetic: Post 10:1 split DCA
+2024-06-28,VOO,BUY,0.05,502.00,0.0,DCA,Synthetic: Monthly DCA
+2024-07-15,AAPL,BUY,0.10,234.00,0.0,Growth/Theme,Synthetic: Apple Intelligence launch
+2024-07-24,TSM,BUY,0.15,160.00,0.0,Dip Buying,Synthetic: Geopolitical dip buy
+2024-08-05,VOO,BUY,0.08,475.00,0.0,Dip Buying,Synthetic: Global market flash crash dip
+2024-08-15,MSFT,BUY,0.05,420.00,0.0,DCA,Synthetic: Monthly DCA
+2024-08-28,NVDA,BUY,0.30,126.00,0.0,DCA,Synthetic: Pre-earnings DCA
+2024-09-16,VOO,BUY,0.05,515.00,0.0,DCA,Synthetic: Monthly DCA
+2024-09-24,AAPL,BUY,0.08,227.00,0.0,Fundamental/Valuation,Synthetic: iPhone 16 cycle
+2024-10-15,MSFT,BUY,0.06,418.00,0.0,DCA,Synthetic: Monthly DCA
+2024-10-28,TSM,BUY,0.12,194.00,0.0,Growth/Theme,Synthetic: AI chip demand
+2024-11-06,VOO,BUY,0.06,543.00,0.0,FOMO/News,Synthetic: Post-election rally
+2024-11-15,NVDA,BUY,0.35,142.00,0.0,Growth/Theme,Synthetic: Blackwell ramp
+2024-11-29,AAPL,BUY,0.08,237.00,0.0,DCA,Synthetic: Monthly DCA
+2024-12-16,VOO,BUY,0.05,548.00,0.0,DCA,Synthetic: Year-end DCA
+2024-12-23,MSFT,BUY,0.05,438.00,0.0,DCA,Synthetic: Year-end DCA
+2025-01-15,VOO,BUY,0.05,540.00,0.0,DCA,Synthetic: New year DCA
+2025-01-27,NVDA,BUY,0.30,128.00,0.0,Dip Buying,Synthetic: DeepSeek market reaction dip
+2025-02-14,AAPL,BUY,0.08,242.00,0.0,DCA,Synthetic: Monthly DCA
+2025-02-28,VOO,BUY,0.05,545.00,0.0,DCA,Synthetic: Monthly DCA
+2025-03-14,MSFT,BUY,0.05,445.00,0.0,Fundamental/Valuation,Synthetic: Steady recurring revenue
+2025-03-28,TSM,BUY,0.10,185.00,0.0,DCA,Synthetic: Monthly DCA
+2025-04-15,VOO,BUY,0.05,535.00,0.0,DCA,Synthetic: Monthly DCA
+2025-05-15,NVDA,BUY,0.25,135.00,0.0,Growth/Theme,Synthetic: Enterprise AI adoption
+2025-06-16,VOO,BUY,0.05,550.00,0.0,DCA,Synthetic: Mid-year DCA
+2025-07-15,AAPL,BUY,0.07,248.00,0.0,DCA,Synthetic: Monthly DCA
+2025-08-15,VOO,BUY,0.05,560.00,0.0,DCA,Synthetic: Monthly DCA
+2025-09-15,MSFT,BUY,0.05,460.00,0.0,DCA,Synthetic: Monthly DCA
+2025-10-15,VOO,BUY,0.05,575.00,0.0,DCA,Synthetic: Monthly DCA

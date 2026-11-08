@@ -206,11 +206,64 @@ def calculate_max_drawdown(conn):
     print(df_mdd.to_string(index=False))
     return df_mdd
 
+def calculate_annualized_returns(conn):
+    """
+    4. คำนวณผลตอบแทนเฉลี่ยตั้งแต่เริ่มจนถึงปัจจุบัน (Cumulative Return & Annualized CAGR) เทียบกับ SPY และ QQQ
+    """
+    print("\n--- 4. ANNUALIZED RETURN & BENCHMARK PERFORMANCE ---")
+    daily_df = pd.read_sql_query("SELECT * FROM portfolio_daily ORDER BY trade_date ASC", conn)
+    if daily_df.empty:
+        return pd.DataFrame()
+        
+    first = daily_df.iloc[0]
+    latest = daily_df.iloc[-1]
+    
+    start_dt = pd.to_datetime(first['trade_date'])
+    end_dt = pd.to_datetime(latest['trade_date'])
+    days = (end_dt - start_dt).days
+    years = days / 365.25 if days > 0 else 1.0
+    
+    def calc_cagr(ret_decimal, yrs):
+        if yrs <= 0: return 0.0
+        val_mult = 1.0 + ret_decimal
+        if val_mult <= 0: return -100.0
+        return (val_mult ** (1.0 / yrs) - 1.0) * 100.0
+
+    inv = latest['total_invested_usd']
+    results = []
+    benchmarks = [
+        ('Real Portfolio', latest['real_portfolio_value_usd'], latest.get('real_nav', 100.0)),
+        ('Shadow SPY', latest['shadow_spy_value_usd'], latest.get('shadow_spy_nav', 100.0)),
+        ('Shadow QQQ', latest['shadow_qqq_value_usd'], latest.get('shadow_qqq_nav', 100.0))
+    ]
+    
+    for name, val, nav in benchmarks:
+        ret_usd = (val - inv) / inv if inv > 0 else 0.0
+        cagr_usd = calc_cagr(ret_usd, years)
+        nav_ret = (nav - 100.0) / 100.0
+        cagr_nav = calc_cagr(nav_ret, years)
+        
+        results.append({
+            'Portfolio': name,
+            'Total Invested ($)': round(inv, 2),
+            'Current Value ($)': round(val, 2),
+            'Cumulative Return (%)': round(ret_usd * 100, 2),
+            'Annualized Return CAGR (%/yr)': round(cagr_usd, 2),
+            'Unit NAV Return (%)': round(nav_ret * 100, 2),
+            'Annualized NAV (%/yr)': round(cagr_nav, 2)
+        })
+        
+    df_res = pd.DataFrame(results)
+    print(f"Investment Period: {days} days ({years:.2f} years)")
+    print(df_res[['Portfolio', 'Cumulative Return (%)', 'Annualized Return CAGR (%/yr)', 'Annualized NAV (%/yr)']].to_string(index=False))
+    return df_res
+
 def run_analytics(db_name=DB_NAME):
     conn = get_connection(db_name)
     review_decisions(conn)
     calculate_stock_attribution(conn)
     calculate_max_drawdown(conn)
+    calculate_annualized_returns(conn)
     conn.close()
 
 if __name__ == "__main__":

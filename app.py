@@ -181,7 +181,51 @@ with tab1:
         )
         st.plotly_chart(fig, use_container_width=True)
 
-        # 4. โซนวัดความเสี่ยง: Max Drawdown (การร่วงลงลึกที่สุดจากจุดสูงสุด)
+        # 4. โซนผลตอบแทนเฉลี่ยตั้งแต่เริ่มจนถึงปัจจุบัน (Annualized Return / CAGR)
+        st.subheader("📈 ผลตอบแทนเฉลี่ยตั้งแต่เริ่มจนถึงปัจจุบัน (Annualized Return & Benchmark)")
+        
+        start_date = df_daily['trade_date'].iloc[0]
+        end_date = df_daily['trade_date'].iloc[-1]
+        days_invested = (pd.to_datetime(end_date) - pd.to_datetime(start_date)).days
+        years_invested = days_invested / 365.25 if days_invested > 0 else 1.0
+
+        st.caption(f"📅 ระยะเวลาลงทุนสะสม: **{days_invested} วัน** (ประมาณ **{years_invested:.2f} ปี**) ตั้งแต่วันที่ {start_date} ถึง {end_date} — คำนวณอัตราผลตอบแทนเฉลี่ยทบต้นต่อปี (CAGR)")
+
+        def get_cagr(ret_pct, yrs):
+            if yrs <= 0: return 0.0
+            mult = 1.0 + (ret_pct / 100.0)
+            if mult <= 0: return -100.0
+            return (mult ** (1.0 / yrs) - 1.0) * 100.0
+
+        inv_usd = latest['total_invested_usd']
+        ret_real = ((latest['real_portfolio_value_usd'] - inv_usd) / inv_usd) * 100.0
+        ret_spy = ((latest['shadow_spy_value_usd'] - inv_usd) / inv_usd) * 100.0
+        ret_qqq = ((latest['shadow_qqq_value_usd'] - inv_usd) / inv_usd) * 100.0
+
+        cagr_real = get_cagr(ret_real, years_invested)
+        cagr_spy = get_cagr(ret_spy, years_invested)
+        cagr_qqq = get_cagr(ret_qqq, years_invested)
+
+        c_ret1, c_ret2, c_ret3 = st.columns(3)
+        c_ret1.metric(
+            "🟢 พอร์ตจริงของฉัน",
+            f"{cagr_real:+.2f}% / ปี",
+            f"รวมสะสม {ret_real:+.2f}%"
+        )
+        c_ret2.metric(
+            "🔵 พอร์ตเงา SPY",
+            f"{cagr_spy:+.2f}% / ปี",
+            f"รวมสะสม {ret_spy:+.2f}%"
+        )
+        c_ret3.metric(
+            "🟣 พอร์ตเงา QQQ",
+            f"{cagr_qqq:+.2f}% / ปี",
+            f"รวมสะสม {ret_qqq:+.2f}%"
+        )
+
+        st.write("")
+
+        # 5. โซนวัดความเสี่ยง: Max Drawdown (การร่วงลงลึกที่สุดจากจุดสูงสุด)
         st.subheader("🛡️ การประเมินความเสี่ยง: การร่วงลงลึกที่สุด (Max Drawdown)")
         st.caption("คำนวณด้วยวิธี **Time-Weighted Return (Unit NAV)** ตามมาตรฐานสากลของกองทุนรวม เพื่อวัดความเสี่ยงจากการผันผวนของราคาตลาดจริง โดยตัดผลกระทบของการเติมเงินหรือถอนเงินสด (Cash Flow Distortion) ออก 100%")
         
@@ -207,7 +251,7 @@ with tab1:
 
         st.divider()
 
-        # 5. ตารางจัดอันดับหุ้นในพอร์ต (Stock Attribution ปรับปรุงใหม่ให้ดูง่ายมาก)
+        # 6. ตารางจัดอันดับหุ้นในพอร์ต (Stock Attribution ปรับปรุงใหม่ให้ดูง่ายมาก)
         st.subheader("🏆 หุ้นตัวไหนทำกำไรให้พอร์ตมากที่สุด? (Stock Attribution)")
         
         if not df_attr.empty:

@@ -181,7 +181,7 @@ with tab1:
         )
         st.plotly_chart(fig, use_container_width=True)
 
-        # 4. โซนผลตอบแทนเฉลี่ยตั้งแต่เริ่มจนถึงปัจจุบัน (Annualized Return / CAGR)
+        # 4. โซนผลตอบแทนเฉลี่ยตั้งแต่เริ่มจนถึงปัจจุบัน (Annualized Return / CAGR ตามมาตรฐาน Unit NAV)
         st.subheader("📈 ผลตอบแทนเฉลี่ยตั้งแต่เริ่มจนถึงปัจจุบัน (Annualized Return & Benchmark)")
         
         start_date = df_daily['trade_date'].iloc[0]
@@ -189,7 +189,7 @@ with tab1:
         days_invested = (pd.to_datetime(end_date) - pd.to_datetime(start_date)).days
         years_invested = days_invested / 365.25 if days_invested > 0 else 1.0
 
-        st.caption(f"📅 ระยะเวลาลงทุนสะสม: **{days_invested} วัน** (ประมาณ **{years_invested:.2f} ปี**) ตั้งแต่วันที่ {start_date} ถึง {end_date} — คำนวณอัตราผลตอบแทนเฉลี่ยทบต้นต่อปี (CAGR)")
+        st.caption(f"📅 ระยะเวลาลงทุนสะสม: **{days_invested} วัน** (ประมาณ **{years_invested:.2f} ปี**) — คำนวณอัตราเฉลี่ยทบต้นต่อปี (CAGR) ด้วยวิธี **Time-Weighted Unit NAV** ตามมาตรฐานสากลของกองทุนรวม")
 
         def get_cagr(ret_pct, yrs):
             if yrs <= 0: return 0.0
@@ -197,31 +197,41 @@ with tab1:
             if mult <= 0: return -100.0
             return (mult ** (1.0 / yrs) - 1.0) * 100.0
 
-        inv_usd = latest['total_invested_usd']
-        ret_real = ((latest['real_portfolio_value_usd'] - inv_usd) / inv_usd) * 100.0
-        ret_spy = ((latest['shadow_spy_value_usd'] - inv_usd) / inv_usd) * 100.0
-        ret_qqq = ((latest['shadow_qqq_value_usd'] - inv_usd) / inv_usd) * 100.0
+        # คำนวณผลตอบแทนจากเส้น Unit NAV (ตัด Cash Drag ของเงินเติมเข้าออก)
+        nav_real = latest.get('real_nav', 100.0)
+        nav_spy = latest.get('shadow_spy_nav', 100.0)
+        nav_qqq = latest.get('shadow_qqq_nav', 100.0)
 
-        cagr_real = get_cagr(ret_real, years_invested)
-        cagr_spy = get_cagr(ret_spy, years_invested)
-        cagr_qqq = get_cagr(ret_qqq, years_invested)
+        ret_real_nav = nav_real - 100.0
+        ret_spy_nav = nav_spy - 100.0
+        ret_qqq_nav = nav_qqq - 100.0
+
+        cagr_real = get_cagr(ret_real_nav, years_invested)
+        cagr_spy = get_cagr(ret_spy_nav, years_invested)
+        cagr_qqq = get_cagr(ret_qqq_nav, years_invested)
 
         c_ret1, c_ret2, c_ret3 = st.columns(3)
         c_ret1.metric(
-            "🟢 พอร์ตจริงของฉัน",
+            "🟢 พอร์ตจริงของฉัน (NAV)",
             f"{cagr_real:+.2f}% / ปี",
-            f"รวมสะสม {ret_real:+.2f}%"
+            f"สะสมรวม {ret_real_nav:+.2f}%",
+            help="อัตราผลตอบแทนเฉลี่ยต่อปีแบบทบต้น (Time-Weighted CAGR)"
         )
         c_ret2.metric(
-            "🔵 พอร์ตเงา SPY",
+            "🔵 พอร์ตเงา SPY (NAV)",
             f"{cagr_spy:+.2f}% / ปี",
-            f"รวมสะสม {ret_spy:+.2f}%"
+            f"สะสมรวม {ret_spy_nav:+.2f}%",
+            help="ดัชนี S&P 500 เฉลี่ยต่อปีแบบทบต้น"
         )
         c_ret3.metric(
-            "🟣 พอร์ตเงา QQQ",
+            "🟣 พอร์ตเงา QQQ (NAV)",
             f"{cagr_qqq:+.2f}% / ปี",
-            f"รวมสะสม {ret_qqq:+.2f}%"
+            f"สะสมรวม {ret_qqq_nav:+.2f}%",
+            help="ดัชนี Nasdaq 100 เฉลี่ยต่อปีแบบทบต้น"
         )
+
+        if cagr_real > cagr_spy:
+            st.success(f"🏆 **ผลงานเหนือตลาด (Alpha Generation):** พอร์ตจริงของเราสร้างผลตอบแทนเฉลี่ย **{cagr_real:+.2f}% ต่อปี** สามารถเอาชนะได้ทั้งดัชนี **SPY ({cagr_spy:+.2f}% ต่อปี)** และดัชนี **QQQ ({cagr_qqq:+.2f}% ต่อปี)** อย่างชัดเจน!")
 
         st.write("")
 

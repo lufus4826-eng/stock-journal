@@ -3,13 +3,22 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Logs & Caches
+*.log
+.pytest_cache/
+.coverage
+htmlcov/
+
 # Environments
 .venv/
 env/
 venv/
 ENV/
 
-# IDE files
+# IDE & OS files
 .vscode/
 .idea/
 .DS_Store
+Thumbs.db
+*.swp
+*.bak

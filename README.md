@@ -83,9 +83,13 @@ flowchart TD
    พอร์ตเงาจะนำเงินก้อนนี้ ไปหาราคา **Adjusted Close ของ SPY และ QQQ** ณ วันเดียวกัน เพื่อซื้อหุ้นดัชนีเก็บไว้
 2. **ทำไมต้องใช้ราคา Adjusted Close?**  
    เพราะกองทุน SPY และ QQQ มีการจ่ายเงินปันผลทุกไตรมาส การใช้ราคาปิดปกติ (`Close`) จะถือว่าเราตัดเงินปันผลที่ควรจะได้ออกไป การใช้ **`Adj Close`** จึงเป็นการคิดผลตอบแทนรวม (Total Return) ที่เป็นธรรมกับดัชนีที่สุด
-3. **การวัดความเสี่ยงด้วย Max Drawdown (MDD):**  
-   วัดว่าจากจุดสูงสุดที่พอร์ตเคยทำได้ เคยร่วงลงมาลึกที่สุดกี่เปอร์เซ็นต์ เพื่อสะท้อนความผันผวนและจิตวิทยาในการถือครอง:
-   $$\text{Max Drawdown} = \min\left(\frac{\text{Value}_t - \text{Peak}_t}{\text{Peak}_t}\right) \times 100\%$$
+3. **การวัดความเสี่ยงด้วย Max Drawdown (MDD) ผ่าน Time-Weighted Unit NAV:**  
+   วัดว่าจากจุดสูงสุดที่พอร์ตเคยทำได้ เคยร่วงลงมาลึกที่สุดกี่เปอร์เซ็นต์ โดยใช้เส้น **Unit NAV** (เริ่มต้นที่ 100) เพื่อตัดความบิดเบือนจากการเติมเงินหรือถอนเงินสด (Cash Flow Distortion) ทำให้สะท้อนความผันผวนของตลาดเพียวๆ:
+   $$\text{Max Drawdown} = \min\left(\frac{\text{NAV}_t - \text{Peak}_t}{\text{Peak}_t}\right) \times 100\%$$
+
+4. **อัตราผลตอบแทนเฉลี่ยทบต้นต่อปี (Annualized Return / CAGR):**  
+   คำนวณเปรียบเทียบผลงานระยะยาวกับดัชนี SPY และ QQQ ตามมาตรฐานกองทุนสากล:
+   $$\text{CAGR} = \left(\frac{\text{Ending NAV}}{\text{Starting NAV}}\right)^{\frac{1}{\text{Years}}} - 1$$
 
 ---
 
@@ -112,10 +116,13 @@ cd stock-journal
 # 2. ติดตั้งแพ็กเกจที่จำเป็น
 pip install -r requirements.txt
 
-# 3. สั่งรัน Pipeline หลังบ้าน (ดึงข้อมูล + คำนวณ + ตรวจสอบ QC)
+# 3. สั่งรันชุด Unit Tests อัตโนมัติ (ทดสอบ Data Quality Gates, Splits, NAV Math)
+python -m unittest discover tests -v
+
+# 4. สั่งรัน Pipeline หลังบ้าน (ดึงข้อมูล + คำนวณ + ตรวจสอบ QC)
 python pipeline.py
 
-# 4. เปิดหน้าเว็บ Dashboard
+# 5. เปิดหน้าเว็บ Dashboard
 streamlit run app.py
 ```
 

@@ -49,3 +49,20 @@
 [2026-11-08 04:29:40] [INFO] [StockJournal]: ✅ PIPELINE EXECUTED SUCCESSFULLY in 5.09 seconds!
 [2026-11-08 04:29:40] [INFO] [StockJournal]: ==================================================
 [2026-11-08 04:29:40] [INFO] [StockJournal]: Closed database connection safely.
+[2026-11-08 19:49:55] [INFO] [StockJournal]: ==================================================
+[2026-11-08 19:49:55] [INFO] [StockJournal]: 🚀 STARTING STOCK JOURNAL DAILY ETL PIPELINE
+[2026-11-08 19:49:55] [INFO] [StockJournal]: ==================================================
+[2026-11-08 19:49:55] [INFO] [StockJournal]: [STEP 1/6] Initializing database schema...
+[2026-11-08 19:49:55] [INFO] [StockJournal]: [STEP 2/6] Running Data Quality check on transactions...
+[2026-11-08 19:49:55] [INFO] [StockJournal]: [QC PASSED] ตาราง transactions ผ่านการตรวจสอบคุณภาพ 100%
+[2026-11-08 19:49:55] [INFO] [StockJournal]: [STEP 3/6] Running Extract process (yfinance)...
+[2026-11-08 19:49:58] [INFO] [StockJournal]: [STEP 4/6] Running Data Quality check on market prices & FX...
+[2026-11-08 19:49:58] [INFO] [StockJournal]: [QC PASSED] ตาราง prices ผ่านการตรวจสอบคุณภาพ 100%
+[2026-11-08 19:49:58] [INFO] [StockJournal]: [QC PASSED] ตาราง fx_rates ผ่านการตรวจสอบคุณภาพ 100%
+[2026-11-08 19:49:58] [INFO] [StockJournal]: [STEP 5/6] Running Transform process (Daily Portfolio Benchmark)...
+[2026-11-08 19:50:00] [INFO] [StockJournal]: [STEP 6/6] Running Analytics & Decision Review...
+[2026-11-08 19:50:00] [INFO] [StockJournal]: [QC PASSED] ตาราง portfolio_daily ผ่านการตรวจสอบคุณภาพ 100%
+[2026-11-08 19:50:00] [INFO] [StockJournal]: ==================================================
+[2026-11-08 19:50:00] [INFO] [StockJournal]: ✅ PIPELINE EXECUTED SUCCESSFULLY in 5.18 seconds!
+[2026-11-08 19:50:00] [INFO] [StockJournal]: ==================================================
+[2026-11-08 19:50:00] [INFO] [StockJournal]: Closed database connection safely.

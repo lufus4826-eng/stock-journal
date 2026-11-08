@@ -180,20 +180,21 @@ def calculate_stock_attribution(conn):
 
 def calculate_max_drawdown(conn):
     """
-    3. คำนวณ Max Drawdown (MDD) พอร์ตจริง vs SPY vs QQQ
+    3. คำนวณ Max Drawdown (MDD) ตามมาตรฐานสากลด้วย Time-Weighted Return (Unit NAV)
+       เพื่อตัดผลกระทบของการเติมเงินและถอนเงินสด (Cash Flow Distortion)
     """
-    print("\n--- 3. MAX DRAWDOWN COMPARISON ---")
-    daily_df = pd.read_sql_query("SELECT trade_date, real_portfolio_value_usd, shadow_spy_value_usd, shadow_qqq_value_usd FROM portfolio_daily ORDER BY trade_date ASC", conn)
+    print("\n--- 3. MAX DRAWDOWN COMPARISON (TIME-WEIGHTED UNIT NAV) ---")
+    daily_df = pd.read_sql_query("SELECT trade_date, real_nav, shadow_spy_nav, shadow_qqq_nav FROM portfolio_daily ORDER BY trade_date ASC", conn)
     daily_df = daily_df.set_index('trade_date')
     
     results = {}
     for col, label in [
-        ('real_portfolio_value_usd', 'Real Portfolio'),
-        ('shadow_spy_value_usd', 'Shadow SPY'),
-        ('shadow_qqq_value_usd', 'Shadow QQQ')
+        ('real_nav', 'Real Portfolio'),
+        ('shadow_spy_nav', 'Shadow SPY'),
+        ('shadow_qqq_nav', 'Shadow QQQ')
     ]:
         series = daily_df[col]
-        # จุดสูงสุดสะสม
+        # จุดสูงสุดสะสมของ NAV
         peak = series.cummax()
         # เปอร์เซ็นต์การดิ่งลงจากจุดสูงสุด
         drawdown = (series - peak) / peak

@@ -84,6 +84,9 @@ def check_portfolio_daily_quality(conn):
     WHERE real_portfolio_value_usd IS NULL 
        OR shadow_spy_value_usd IS NULL 
        OR shadow_qqq_value_usd IS NULL
+       OR real_nav IS NULL
+       OR shadow_spy_nav IS NULL
+       OR shadow_qqq_nav IS NULL
     """)
     null_vals = cursor.fetchone()[0]
     if null_vals > 0:

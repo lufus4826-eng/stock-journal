@@ -183,24 +183,27 @@ with tab1:
 
         # 4. โซนวัดความเสี่ยง: Max Drawdown (การร่วงลงลึกที่สุดจากจุดสูงสุด)
         st.subheader("🛡️ การประเมินความเสี่ยง: การร่วงลงลึกที่สุด (Max Drawdown)")
-        st.caption("วัดว่าจากจุดสูงสุดที่พอร์ตเคยทำได้ ดิ่งลงมาลึกที่สุดกี่ % (ยิ่งติดลบน้อย แสดงว่าพอร์ตยิ่งนิ่ง ผันผวนต่ำ และหลับสบาย)")
+        st.caption("คำนวณด้วยวิธี **Time-Weighted Return (Unit NAV)** ตามมาตรฐานสากลของกองทุนรวม เพื่อวัดความเสี่ยงจากการผันผวนของราคาตลาดจริง โดยตัดผลกระทบของการเติมเงินหรือถอนเงินสด (Cash Flow Distortion) ออก 100%")
         
         def calc_mdd(series):
             peak = series.cummax()
             dd = (series - peak) / peak
             return dd.min() * 100
 
-        mdd_real = calc_mdd(df_daily['real_portfolio_value_usd'])
-        mdd_spy = calc_mdd(df_daily['shadow_spy_value_usd'])
-        mdd_qqq = calc_mdd(df_daily['shadow_qqq_value_usd'])
+        col_real = 'real_nav' if 'real_nav' in df_daily.columns else 'real_portfolio_value_usd'
+        col_spy = 'shadow_spy_nav' if 'shadow_spy_nav' in df_daily.columns else 'shadow_spy_value_usd'
+        col_qqq = 'shadow_qqq_nav' if 'shadow_qqq_nav' in df_daily.columns else 'shadow_qqq_value_usd'
+
+        mdd_real = calc_mdd(df_daily[col_real])
+        mdd_spy = calc_mdd(df_daily[col_spy])
+        mdd_qqq = calc_mdd(df_daily[col_qqq])
 
         m_col1, m_col2, m_col3 = st.columns(3)
         m_col1.metric("🟢 พอร์ตจริงของฉัน", f"{mdd_real:.2f}%")
         m_col2.metric("🔵 พอร์ตเงา SPY", f"{mdd_spy:.2f}%")
         m_col3.metric("🟣 พอร์ตเงา QQQ", f"{mdd_qqq:.2f}%")
 
-        if abs(mdd_real) < abs(mdd_spy):
-            st.success(f"🛡️ **จุดเด่นด้านความเสี่ยง:** พอร์ต DCA ของเรามีความผันผวนต่ำกว่าตลาดรวม โดย Max Drawdown ร่วงลึกสุดเพียง **{mdd_real:.2f}%** (ในขณะที่ SPY ร่วงลึกถึง **{mdd_spy:.2f}%** และ QQQ ร่วง **{mdd_qqq:.2f}%**)")
+        st.info(f"💡 **วิเคราะห์ความเสี่ยง:** พอร์ตจริงร่วงลึกสุดเพียง **{mdd_real:.2f}%** อยู่กึ่งกลางระหว่างความเสี่ยงต่ำของ SPY (**{mdd_spy:.2f}%**) และความผันผวนสูงของ QQQ (**{mdd_qqq:.2f}%**) สะท้อนการกระจายความเสี่ยง (Asset Allocation) ที่เหมาะสมระหว่างหุ้นเทคโนโลยีและหุ้นปันผลเสถียร")
 
         st.divider()
 

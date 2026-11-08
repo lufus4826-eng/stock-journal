@@ -67,9 +67,19 @@ def init_db(db_name=DB_NAME):
         real_portfolio_value_thb REAL NOT NULL,
         shadow_spy_value_thb REAL NOT NULL,
         shadow_qqq_value_thb REAL NOT NULL,
-        fx_rate REAL NOT NULL
+        fx_rate REAL NOT NULL,
+        real_nav REAL DEFAULT 100.0,
+        shadow_spy_nav REAL DEFAULT 100.0,
+        shadow_qqq_nav REAL DEFAULT 100.0
     );
     """)
+
+    # ตรวจสอบว่ามีคอลัมน์ NAV สำหรับ Time-Weighted Return หรือไม่ (ถ้ายังไม่มีให้เติมอัตโนมัติ)
+    cursor.execute("PRAGMA table_info(portfolio_daily)")
+    existing_cols = [col[1] for col in cursor.fetchall()]
+    for col in ['real_nav', 'shadow_spy_nav', 'shadow_qqq_nav']:
+        if col not in existing_cols:
+            cursor.execute(f"ALTER TABLE portfolio_daily ADD COLUMN {col} REAL DEFAULT 100.0")
 
     conn.commit()
     conn.close()

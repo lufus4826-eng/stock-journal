@@ -64,10 +64,30 @@ def calculate_daily_portfolio(db_name=DB_NAME):
     shadow_spy_shares = 0.0      # หุ้น SPY ในพอร์ตเงา
     shadow_qqq_shares = 0.0      # หุ้น QQQ ในพอร์ตเงา
 
+    # ตัวแปร Time-Weighted Return (Unit NAV) เริ่มต้นที่ 100.0 (มาตรฐานกองทุนรวม)
+    # เพื่อตัดผลกระทบของการเติมเงินหรือถอนเงิน (Cash Flow Distortion)
+    real_nav = 100.0
+    shadow_spy_nav = 100.0
+    shadow_qqq_nav = 100.0
+    prev_date = None
+
     daily_records = []
 
     # 6. เดินหน้าจำลองพอร์ตวันต่อวัน
     for current_date in all_dates:
+        # อัปเดต Unit NAV จากการขยับของราคาตลาดของหุ้นที่ถือครองข้ามคืน (ก่อนมีรายการซื้อขายใหม่ของวันนี้)
+        if prev_date is not None and sum(real_holdings.values()) > 0:
+            val_yesterday = sum(s * price_matrix.loc[prev_date, t] for t, s in real_holdings.items() if t in price_matrix.columns)
+            val_today_prior = sum(s * price_matrix.loc[current_date, t] for t, s in real_holdings.items() if t in price_matrix.columns)
+            r_real = (val_today_prior / val_yesterday - 1.0) if val_yesterday > 0 else 0.0
+            real_nav *= (1.0 + r_real)
+
+            r_spy = (price_matrix.loc[current_date, 'SPY'] / price_matrix.loc[prev_date, 'SPY']) - 1.0
+            shadow_spy_nav *= (1.0 + r_spy)
+
+            r_qqq = (price_matrix.loc[current_date, 'QQQ'] / price_matrix.loc[prev_date, 'QQQ']) - 1.0
+            shadow_qqq_nav *= (1.0 + r_qqq)
+
         # เช็กว่าวันนี้มีรายการซื้อขายในตาราง transactions หรือไม่
         days_trades = trades_df[trades_df['trade_date'] == current_date]
         
@@ -124,7 +144,9 @@ def calculate_daily_portfolio(db_name=DB_NAME):
         shadow_spy_val_thb = shadow_spy_val_usd * current_fx
         shadow_qqq_val_thb = shadow_qqq_val_usd * current_fx
 
-        # บันทึกแถวผลลัพธ์ประจำวันนี้
+        prev_date = current_date
+
+        # บันทึกแถวผลลัพธ์ประจำวันนี้ (รวมค่า NAV สำหรับวัดความเสี่ยงจริง)
         daily_records.append((
             current_date,
             round(total_invested_usd, 2),
@@ -134,7 +156,10 @@ def calculate_daily_portfolio(db_name=DB_NAME):
             round(real_val_thb, 2),
             round(shadow_spy_val_thb, 2),
             round(shadow_qqq_val_thb, 2),
-            round(current_fx, 4)
+            round(current_fx, 4),
+            round(real_nav, 4),
+            round(shadow_spy_nav, 4),
+            round(shadow_qqq_nav, 4)
         ))
 
     # 7. บันทึกผลลัพธ์ทั้งหมดลงตาราง portfolio_daily
@@ -149,8 +174,11 @@ def calculate_daily_portfolio(db_name=DB_NAME):
         real_portfolio_value_thb,
         shadow_spy_value_thb,
         shadow_qqq_value_thb,
-        fx_rate
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        fx_rate,
+        real_nav,
+        shadow_spy_nav,
+        shadow_qqq_nav
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, daily_records)
 
     conn.commit()

@@ -42,6 +42,9 @@ def fetch_and_save_prices(conn, tickers, start_date):
         stock = yf.Ticker(ticker)
         # auto_adjust=False เพื่อให้ได้ทั้ง Close ปกติ และ Adj Close ที่รวมปันผล
         hist = stock.history(start=start_date, auto_adjust=False)
+        if not hist.empty:
+            # กรองแถวที่ราคาปิดยังเป็นค่าว่าง (NaN) ออกจากผลลัพธ์ของ yfinance
+            hist = hist.dropna(subset=['Close', 'Adj Close'])
         
         if hist.empty:
             print(f"[WARN] No price data found for {ticker}")
@@ -71,6 +74,9 @@ def fetch_and_save_fx(conn, start_date):
     
     fx = yf.Ticker("THB=X")
     hist = fx.history(start=start_date)
+    if not hist.empty:
+        # กรองแถวที่อัตราแลกเปลี่ยนเป็นค่าว่าง (NaN) ออก
+        hist = hist.dropna(subset=['Close'])
     
     if hist.empty:
         print("[WARN] No FX data found for THB=X")

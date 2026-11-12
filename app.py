@@ -270,14 +270,26 @@ with tab1:
             c_hero2.info(f"💵 **กำไรเป็นเงิน USD สูงสุด:** **{top_cash_stock['ticker']}** (+${top_cash_stock['pnl_usd']:,.2f})")
             
             # แปลงชื่อคอลัมน์ให้อ่านง่ายเป็นภาษาไทย และจัดฟอร์แมตตัวเลข
+            def format_signed(val, prefix="", suffix=""):
+                if pd.isna(val):
+                    return ""
+                if round(val, 2) == 0:
+                    return f"{prefix}0.00{suffix}"
+                sign = "+" if val > 0 else "-"
+                return f"{sign}{prefix}{abs(val):,.2f}{suffix}"
+
             display_attr = df_attr_sorted.copy()
             display_attr.columns = [
                 'สัญลักษณ์หุ้น', 'จำนวนหุ้นในมือ', 'ราคาตลาดล่าสุด (ต่อหุ้น)',
                 'เงินต้นสะสม (USD)', 'มูลค่ารวมในพอร์ต (USD)', 'กำไร/ขาดทุน (USD)', 'ผลตอบแทน (%)'
             ]
+            display_attr_styled = display_attr.style.format({
+                'กำไร/ขาดทุน (USD)': lambda v: format_signed(v, prefix="$"),
+                'ผลตอบแทน (%)': lambda v: format_signed(v, suffix="%"),
+            })
             
             st.dataframe(
-                display_attr,
+                display_attr_styled,
                 use_container_width=True,
                 hide_index=True,
                 column_config={
@@ -286,8 +298,8 @@ with tab1:
                     "ราคาตลาดล่าสุด (ต่อหุ้น)": st.column_config.NumberColumn("💲 ราคาตลาดล่าสุด", format="$%.2f"),
                     "เงินต้นสะสม (USD)": st.column_config.NumberColumn("💵 เงินต้น", format="$%.2f"),
                     "มูลค่ารวมในพอร์ต (USD)": st.column_config.NumberColumn("💎 มูลค่ารวมในพอร์ต", format="$%.2f"),
-                    "กำไร/ขาดทุน (USD)": st.column_config.NumberColumn("📈 กำไร/ขาดทุน ($)", format="+$%.2f"),
-                    "ผลตอบแทน (%)": st.column_config.NumberColumn("🎯 ผลตอบแทน (%)", format="+%.2f%%"),
+                    "กำไร/ขาดทุน (USD)": st.column_config.NumberColumn("📈 กำไร/ขาดทุน ($)"),
+                    "ผลตอบแทน (%)": st.column_config.NumberColumn("🎯 ผลตอบแทน (%)"),
                 }
             )
 

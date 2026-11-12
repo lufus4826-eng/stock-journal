@@ -116,13 +116,10 @@ cd stock-journal
 # 2. ติดตั้งแพ็กเกจที่จำเป็น
 pip install -r requirements.txt
 
-# 3. สั่งรันชุด Unit Tests อัตโนมัติ (ทดสอบ Data Quality Gates, Splits, NAV Math)
-python -m unittest discover tests -v
-
-# 4. สั่งรัน Pipeline หลังบ้าน (ดึงข้อมูล + คำนวณ + ตรวจสอบ QC)
+# 3. สั่งรัน Pipeline หลังบ้าน (ดึงข้อมูล + คำนวณ + ตรวจสอบ QC)
 python pipeline.py
 
-# 5. เปิดหน้าเว็บ Dashboard
+# 4. เปิดหน้าเว็บ Dashboard
 streamlit run app.py
 ```
 

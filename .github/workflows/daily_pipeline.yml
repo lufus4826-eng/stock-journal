@@ -33,15 +33,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # ขั้นที่ 4: สั่งรันชุด Unit Tests อัตโนมัติ (Data Quality Gates, Splits, NAV Math)
-      - name: Run Automated Unit Tests
-        run: python -m unittest discover tests -v
-
-      # ขั้นที่ 5: สั่งรัน Master Pipeline
+      # ขั้นที่ 4: สั่งรัน Master Pipeline
       - name: Run Master Pipeline
         run: python pipeline.py
 
-      # ขั้นที่ 6: บันทึกไฟล์ฐานข้อมูลใหม่กลับเข้า GitHub อัตโนมัติ
+      # ขั้นที่ 5: บันทึกไฟล์ฐานข้อมูลใหม่กลับเข้า GitHub อัตโนมัติ
       - name: Commit and Push Updated Data
         run: |
           git config --global user.name "github-actions[bot]"

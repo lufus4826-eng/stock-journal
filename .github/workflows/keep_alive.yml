@@ -27,4 +27,4 @@ jobs:
 
       - name: Execute Keep-Alive Ping
         run: |
-          python keep_alive.py
+          python scripts/keep_alive.py

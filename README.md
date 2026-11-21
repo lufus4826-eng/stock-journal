@@ -3,11 +3,17 @@
 ระบบ `ETL Pipeline` และ Dashboard วิเคราะห์พอร์ตออมหุ้นสหรัฐฯ ที่ช่วยจำลองพอร์ตคู่ขนาน (`Shadow Portfolio`) ด้วยเงินก้อนเดียวกันในวันเดียวกันเทียบกับดัชนี `SPY` และ `QQQ` อัตโนมัติทุกวัน เพื่อพิสูจน์ด้วยตัวเลขจริงว่าการเลือกหุ้นเองชนะตลาดไหม และเหตุผลในการซื้อแบบไหนที่ทำเงินหรือพาพอร์ตพัง
 
 > 🔗 **Live Dashboard (เว็บใช้งานจริง):** https://stock-journal-4i7wnvrpwpnwdrck6vbm98.streamlit.app/
->
-> 🖼️ **พื้นที่สำหรับรูปภาพหน้าจอ Dashboard (2–3 รูป):**
-> - `[แทรกรูปภาพหน้าจอ Dashboard 1: หน้า Overview กราฟเปรียบเทียบผลตอบแทนพอร์ตจริง vs Shadow SPY/QQQ]`
-> - `[แทรกรูปภาพหน้าจอ Dashboard 2: ตาราง Max Drawdown, CAGR และ Stock Attribution]`
-> - `[แทรกรูปภาพหน้าจอ Dashboard 3: หน้า Decision Review วิเคราะห์ Win Rate แยกตามเหตุผลการซื้อ]`
+
+### 📸 ตัวอย่างหน้าจอ Dashboard
+
+**1. ภาพรวมพอร์ตจริงเทียบกับพอร์ตเงา (`Overview` — Real vs Shadow `SPY` / `QQQ`)**
+![Overview Dashboard](assets/dashboard-overview.jpg)
+
+**2. ผลตอบแทนทบต้น (`CAGR`), ความเสี่ยง (`Max Drawdown`) และกำไรรายหุ้น (`Stock Attribution`)**
+![Risk and Stock Attribution](assets/dashboard-risk-attribution.jpg)
+
+**3. วัดผลความแม่นยำแยกตามเหตุผลการซื้อ (`Decision Review`)**
+![Decision Review](assets/dashboard-decision-review.jpg)
 
 ---
 
@@ -80,6 +86,7 @@ stock-journal/
 ├── .github/workflows/
 │   ├── daily_pipeline.yml   # Cron Job รัน Unit Test + ETL Pipeline ทุกวัน 07:00 น. (เวลาไทย)
 │   └── keep_alive.yml       # Cron Job ปลุกเว็บ Streamlit ทุก 6 ชั่วโมง
+├── assets/                  # ภาพหน้าจอตัวอย่าง Dashboard สำหรับแสดงบน README
 ├── scripts/
 │   ├── import_trades.py     # สคริปต์เสริมสำหรับนำเข้าไฟล์ CSV เข้า SQLite
 │   └── keep_alive.py        # สคริปต์ Playwright ป้องกัน Streamlit Cloud เข้าโหมดหลับ
